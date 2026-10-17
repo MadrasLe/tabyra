@@ -1,0 +1,198 @@
+{
+  "name": "elektron-browser",
+  "displayName": "Tabyra Browser",
+  "description": "A browser shared by you and your AI, inside your editor. Formerly Elektron Browser.",
+  "version": "0.7.0",
+  "publisher": "gabrielyogi",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "tabyra",
+    "browser",
+    "antigravity",
+    "mcp",
+    "shared-browser",
+    "chromium",
+    "elektron"
+  ],
+  "main": "./dist/extension.cjs",
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": false
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:elektron.launcher",
+    "onCommand:elektron.open",
+    "onCommand:elektron.copyMcpConfig",
+    "onCommand:elektron.stop"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "elektron.open",
+        "title": "Tabyra: Abrir navegador",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "elektron.copyMcpConfig",
+        "title": "Tabyra: Copiar configuração MCP"
+      },
+      {
+        "command": "elektron.stop",
+        "title": "Tabyra: Encerrar navegador",
+        "icon": "$(close)"
+      },
+      {
+        "command": "elektron.newTab",
+        "title": "Tabyra: Nova aba",
+        "icon": "$(add)"
+      },
+      {
+        "command": "elektron.connect",
+        "title": "Tabyra: Conectar IA",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "elektron.toggleAgent",
+        "title": "Tabyra: Pausar ou retomar IA",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "elektron.settings",
+        "title": "Tabyra: Configurações",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "elektron",
+          "title": "Tabyra",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "elektron": [
+        {
+          "id": "elektron.launcher",
+          "name": "Navegador",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "elektron.open",
+          "when": "view == elektron.launcher",
+          "group": "navigation@1"
+        },
+        {
+          "command": "elektron.settings",
+          "when": "view == elektron.launcher",
+          "group": "navigation@2"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "elektron.open",
+          "group": "navigation@90",
+          "when": "activeWebviewPanelId != elektron.browser"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "elektron.open",
+        "key": "ctrl+alt+b",
+        "mac": "cmd+alt+b"
+      }
+    ],
+    "configuration": {
+      "title": "Tabyra Browser",
+      "properties": {
+        "elektron.executablePath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Caminho de um Chrome/Edge/Chromium. Vazio: detectar automaticamente. Reinicie o Tabyra após alterar."
+        },
+        "elektron.startPage": {
+          "type": "string",
+          "default": "about:blank",
+          "description": "Página inicial de novas abas."
+        },
+        "elektron.captureIntervalMs": {
+          "type": "number",
+          "default": 250,
+          "minimum": 100,
+          "maximum": 2000,
+          "description": "Intervalo entre imagens. Um valor maior reduz o consumo de CPU."
+        },
+        "elektron.imageQuality": {
+          "type": "number",
+          "default": 80,
+          "minimum": 30,
+          "maximum": 95,
+          "description": "Qualidade JPEG do painel (30–95)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node scripts/package-app.mjs && node --test --test-concurrency=1 test/*.test.cjs",
+    "package": "npm run check && npm run build && vsce package --pre-release --out tabyra-browser-0.7.0.vsix",
+    "app:package": "npm run check && npm run build && node scripts/package-app.mjs",
+    "app:install": "npm run app:package && node scripts/install-app.mjs",
+    "vscode:prepublish": "npm run build",
+    "release": "npm run package && node scripts/package-app.mjs && node scripts/package-release.mjs",
+    "release:check": "node scripts/check-release.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.64.1",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@types/node": "^26.6.5",
+    "@types/vscode": "^1.90.0",
+    "@types/ws": "^8.18.2",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "jsonc-parser": "^3.3.1",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.7"
+  },
+  "icon": "media/store-icon.png",
+  "author": {
+    "name": "Gabriel Yogi",
+    "email": "abrakasfrosken@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/MadrasLe/tabyra/issues",
+    "email": "abrakasfrosken@gmail.com"
+  },
+  "galleryBanner": {
+    "color": "#4437AD",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MadrasLe/tabyra.git"
+  },
+  "homepage": "https://github.com/MadrasLe/tabyra#readme"
+}

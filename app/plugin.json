@@ -1,0 +1,14 @@
+{
+  "name": "elektron-app",
+  "displayName": "Tabyra",
+  "version": "0.6.0",
+  "description": "Navegador compartilhado com sua IA, no painel da conversa do Antigravity App. Funciona sem a IDE e inicia em modo leve.",
+  "author": {
+    "name": "Gabriel Yogi",
+    "email": "abrakasfrosken@gmail.com"
+  },
+  "license": "MIT",
+  "suggestedPrompts": [
+    "Abra o painel Tabyra App e use o MCP desse plugin para listar as abas do navegador."
+  ]
+}

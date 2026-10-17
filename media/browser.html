@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src {{csp}}; script-src 'nonce-{{nonce}}';">
+  <link rel="stylesheet" href="{{style}}">
+  <title>Tabyra Browser</title>
+</head>
+<body>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="3.8" ry="9"/><path d="M3 12h18M5 6.5h14M5 17.5h14"/></symbol>
+    <symbol id="i-brand" viewBox="0 0 24 24"><path d="M4 4h16v5h-6v11h-4V9H4V4Z"/><path d="m20 15 .8 1.8 1.7.7-1.7.7L20 20l-.8-1.8-1.7-.7 1.7-.7L20 15Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-reload" viewBox="0 0 24 24"><path d="M20 7v5h-5M19 12a7 7 0 1 0-1.8 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6L10 14M10 5H5v15h15v-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M19 4c1 8-2 15-8 15-4 0-6-3-5-6 1-4 5-6 13-9ZM5 21l9-11"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+  </svg>
+  <header>
+    <div class="tabbar">
+      <div class="brand" title="Tabyra Browser"><svg><use href="#i-brand"/></svg><span>Tabyra</span></div>
+      <div id="tabs" role="tablist" aria-label="Abas do navegador"></div>
+      <button id="chrome-settings" class="chrome-button" title="Escolher navegador e conectar Chrome">Chrome</button>
+      <button id="new-tab" class="icon" title="Nova aba" aria-label="Nova aba"><svg><use href="#i-plus"/></svg></button>
+    </div>
+    <div class="toolbar">
+      <button id="back" class="icon" title="Voltar" aria-label="Voltar"><svg><use href="#i-arrow"/></svg></button>
+      <button id="forward" class="icon" title="Avançar" aria-label="Avançar"><svg class="flip"><use href="#i-arrow"/></svg></button>
+      <button id="reload" class="icon" title="Recarregar" aria-label="Recarregar"><svg><use href="#i-reload"/></svg></button>
+      <form id="navigation">
+        <svg id="site-icon" aria-hidden="true"><use href="#i-globe"/></svg>
+        <input id="address" type="text" spellcheck="false" autocomplete="off" aria-label="Endereço ou pesquisa" placeholder="Pesquisar ou digitar um endereço">
+        <kbd title="Selecionar endereço">Ctrl L</kbd>
+      </form>
+      <button id="external" class="icon" title="Abrir URL no navegador externo (outra sessão)" aria-label="Abrir no navegador externo"><svg><use href="#i-external"/></svg></button>
+    </div>
+  </header>
+  <main id="viewport">
+    <canvas id="screen" aria-label="Página do navegador. Clique para interagir e digite normalmente."></canvas>
+    <textarea id="keyboard" aria-label="Entrada de teclado da página" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
+    <section id="welcome">
+      <div class="welcome-content">
+        <div class="welcome-tag"><span class="dot"></span> SEU ESPAÇO NA WEB</div>
+        <div class="orb" aria-hidden="true"><svg><use href="#i-brand"/></svg><span class="orb-spark">✦</span></div>
+        <h1>Um navegador.<br><span>Você e sua IA.</span></h1>
+        <p>Abra uma página, explore uma ideia ou deixe<br class="wide-only"> sua IA cuidar dos próximos passos.</p>
+        <form id="start-navigation"><svg><use href="#i-search"/></svg><input id="start-address" type="text" aria-label="Pesquisar ou abrir uma página" placeholder="O que vamos abrir?" autocomplete="off"><button type="submit" class="primary">Abrir <span>↗</span></button></form>
+        <div class="shortcuts">
+          <button data-url="https://www.google.com"><span class="shortcut-icon google">G</span><span>Google<small>Pesquisar na web</small></span><b>↗</b></button>
+          <button data-url="http://localhost:3000"><span class="shortcut-icon">⌘</span><span>Meu projeto<small>localhost:3000</small></span><b>↗</b></button>
+        </div>
+        <button id="welcome-connect" class="text-button"><svg><use href="#i-spark"/></svg> Conectar minha IA <span>→</span></button>
+        <button id="start-chrome" class="primary hidden">Conectar Chrome ↗</button>
+        <div id="starting" role="status">Preparando seu navegador…</div>
+      </div>
+    </section>
+    <div id="busy" class="hidden" role="status"><span class="spinner"></span> Abrindo página…</div>
+    <div id="agent-cursor" class="hidden" aria-hidden="true"><svg viewBox="0 0 28 32"><path d="M3 2 24 20l-10 1-4 9Z"/></svg><span>IA</span></div>
+    <div id="activity" class="hidden" role="status"><svg><use href="#i-spark"/></svg><span id="activity-text"></span></div>
+    <section id="chrome-login" class="hidden" aria-label="Login manual"><div><span class="login-icon">◉</span><h2>Entre na sua conta no Chrome.</h2><p>A IA está pausada. As suas abas continuam abertas e aparecem aqui.<br>Quando terminar, retome o painel para continuar na mesma sessão.</p><button id="chrome-resume" class="primary">Já terminei · Retomar painel</button></div></section>
+    <aside id="chrome-guide" class="hidden" role="dialog" aria-label="Conectar Chrome" aria-modal="false">
+      <div class="connection-heading"><span class="connection-icon"><svg><use href="#i-globe"/></svg></span><button id="close-chrome" class="icon" aria-label="Fechar opções do Chrome">×</button></div>
+      <h2>Seu navegador, pronto.</h2><p>Conecte o Chrome uma vez. Depois, continue com as mesmas contas e abas.</p>
+      <label for="browser-mode">Modo de navegação</label><select id="browser-mode"><option value="embedded">Tabyra integrado</option><option value="chrome">Chrome conectado · suas contas</option></select>
+      <div id="chrome-setup" class="hidden"><div class="connection-card"><span class="connection-orb">◉</span><div><strong id="chrome-state-title">Pronto para conectar</strong><div id="chrome-status" role="status">A extensão guarda sua conexão neste perfil.</div></div></div>
+        <button id="chrome-connect" class="primary full">Conectar Chrome <span>↗</span></button><p class="connection-hint">Abre uma página local de conexão. Sem copiar códigos.</p>
+        <div id="chrome-update" class="hidden">Sua extensão Chrome precisa da versão 0.2.0 para conectar por este botão. Atualize-a uma vez em chrome://extensions.</div>
+        <div class="chrome-account"><b>Contas e login</b><p>Libere o controle da IA enquanto entra na sua conta. Depois, continue nesta mesma sessão.</p><button id="chrome-manual">Fazer login no Chrome</button></div>
+        <details id="chrome-install"><summary>Primeiro acesso ou atualizar extensão</summary><p>Instale uma vez neste perfil. No Chrome, abra Extensões, ative Modo do desenvolvedor e escolha Carregar sem compactação. Se já instalou, clique em Atualizar ou no ícone de recarregar da extensão Tabyra.</p><div class="chrome-actions"><button id="chrome-open">Abrir extensões</button><button id="chrome-copy-path">Copiar pasta da extensão</button></div></details>
+        <details class="chrome-advanced"><summary>Conexão manual · versões anteriores</summary><p>Use somente se estiver com uma extensão antiga. A conexão atual não precisa de JSON.</p><button id="chrome-copy-code">Copiar código de conexão</button></details>
+        <div id="chrome-feedback" role="status"></div><p class="chrome-note">A conexão é local. Desconectar mantém suas abas no Chrome. Este modo usa o perfil onde a extensão foi instalada e não transfere contas do navegador integrado.</p>
+      </div>
+    </aside>
+    <aside id="connection" class="hidden" role="dialog" aria-label="Conectar a IA" aria-modal="false">
+      <div class="connection-heading"><span class="connection-icon"><svg><use href="#i-spark"/></svg></span><button id="close-connection" class="icon" aria-label="Fechar guia de conexão">×</button></div>
+      <h2>Sua IA, no mesmo navegador.</h2><p>Configure uma vez. Depois, peça o que precisa no chat do Antigravity.</p>
+      <ol><li><span>1</span><div><strong>Copie a configuração</strong><p>O botão abaixo prepara a conexão deste projeto.</p></div></li><li><span>2</span><div><strong>Adicione no Antigravity</strong><p>No menu do agente: MCP Servers → Manage MCP Servers → View raw config. Mescle a entrada elektron-browser em mcpServers e salve.</p></div></li><li><span>3</span><div><strong>Atualize e experimente</strong><p>Atualize os servidores MCP. No chat, peça para usar o elektron-browser para abrir uma página.</p></div></li></ol>
+      <button id="copy-config" class="primary">Copiar configuração</button><div id="copy-feedback" role="status"></div>
+      <div class="connection-note">Já estava conectado? O acesso continua disponível enquanto este painel estiver aberto.</div>
+    </aside>
+  </main>
+  <div id="operation" class="hidden" role="status"><span class="spinner"></span><span id="operation-label">Executando JavaScript…</span><button id="cancel-operation">Interromper</button></div>
+  <div id="notice" class="hidden" role="status"><span id="notice-text"></span><button id="dismiss" class="icon" aria-label="Fechar aviso">×</button></div>
+  <footer>
+    <span class="connection-status" id="connection-status" title="O acesso da IA é liberado neste painel; a conexão é feita nas configurações MCP do Antigravity."><span class="dot"></span><span id="connection-label">Navegador compartilhado</span></span>
+    <div class="footer-actions">
+      <button id="economy" class="economy" aria-pressed="false" title="Modo leve: reduz a frequência e a qualidade das imagens"><svg><use href="#i-leaf"/></svg><span>Modo leve</span></button>
+      <button id="mcp" title="Abrir guia para conectar sua IA"><svg><use href="#i-spark"/></svg><span>Conectar IA</span></button>
+      <button id="agent" class="agent" aria-pressed="true" title="Pausar o acesso da IA"><svg><use href="#i-pause"/></svg><span id="agent-label">Pausar IA</span></button>
+    </div>
+  </footer>
+  <script nonce="{{nonce}}" src="{{script}}"></script>
+</body>
+</html>
