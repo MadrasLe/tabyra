@@ -4,7 +4,15 @@ Brand: **Tabyra**. Products: **Tabyra Browser** (IDE), **Tabyra** (Antigravity A
 
 The stable extension identity is `gabrielyogi.elektron-browser`; the App plugin remains `elektron-app`. These are intentional compatibility IDs, not unfinished display-name changes. [Migration](MIGRATION.md).
 
-Project: https://github.com/MadrasLe/tabyra. Public privacy policy: https://github.com/MadrasLe/tabyra/blob/main/PRIVACY.md. Support: https://github.com/MadrasLe/tabyra/blob/main/SUPPORT.md. These links become available after the repository is published; verify them before a store submission.
+Project: https://github.com/MadrasLe/tabyra. Public privacy policy: https://github.com/MadrasLe/tabyra/blob/main/PRIVACY.md. Support: https://github.com/MadrasLe/tabyra/blob/main/SUPPORT.md. The repository and these public pages are available.
+
+## Submission status — 17 October 2026
+
+- The public [GitHub beta](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.0-beta.1) is available for download.
+- Open VSX received Browser **0.7.0** under `gabrielyogi.elektron-browser`, published by **MadrasLe**. The publisher agreement was signed and the `gabrielyogi` namespace was created.
+- The Open VSX dashboard currently reports **Deactivated**, and the public extension page is not yet available. Upload completion does not establish catalog availability or approval.
+- Namespace ownership and initial activation review were requested in [EclipseFdn/open-vsx.org#14363](https://github.com/EclipseFdn/open-vsx.org/issues/14363). Await the registry team's decision before advertising an Open VSX installation link.
+- VS Code Marketplace and Chrome Web Store submissions remain pending.
 
 ## Reviewable assets
 
