@@ -9,9 +9,9 @@ Project: https://github.com/MadrasLe/tabyra. Public privacy policy: https://gith
 ## Submission status — 17 October 2026
 
 - The public [GitHub beta](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.0-beta.1) is available for download.
-- Open VSX received Browser **0.7.0** under `gabrielyogi.elektron-browser`, published by **MadrasLe**. The publisher agreement was signed and the `gabrielyogi` namespace was created.
-- The Open VSX dashboard currently reports **Deactivated**, and the public extension page is not yet available. Upload completion does not establish catalog availability or approval.
-- Namespace ownership and initial activation review were requested in [EclipseFdn/open-vsx.org#14363](https://github.com/EclipseFdn/open-vsx.org/issues/14363). Await the registry team's decision before advertising an Open VSX installation link.
+- [Tabyra Browser **0.7.0** is publicly available on Open VSX](https://open-vsx.org/extension/gabrielyogi/elektron-browser), published by **MadrasLe** under `gabrielyogi.elektron-browser` and marked **Preview**.
+- The public listing displays **Verified publisher**. The publisher agreement was signed and the `gabrielyogi` namespace was created and verified.
+- The namespace request [EclipseFdn/open-vsx.org#14363](https://github.com/EclipseFdn/open-vsx.org/issues/14363) is closed. The public listing was checked after activation; the earlier Deactivated state is resolved.
 - VS Code Marketplace and Chrome Web Store submissions remain pending.
 
 ## Reviewable assets
