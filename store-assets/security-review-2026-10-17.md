@@ -34,7 +34,7 @@ The real extension-host smoke checks passed in **Antigravity IDE 1.107.0** and *
 
 The local Browser **0.7.1** and App **0.6.1** installations were verified against the reviewed runtime files. Pre/post configuration fingerprints confirmed that existing permission grants and unrelated MCP servers remained unchanged. The App installer backed up the previous plugin; the IDE MCP path repair backed up the configuration it changed. Loading the updated code requires an editor/App reload.
 
-The public [patch release](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.1-beta.1) was uploaded to GitHub, then its VSIX and ZIP assets were downloaded again and matched against the release SHA-256 hashes. The [source-check workflow](https://github.com/MadrasLe/tabyra/actions/runs/39087897135) also passed on GitHub for security commit `56312ce4155f8eb92b4c00d14caad59108a091f4`. Open VSX received Browser 0.7.1, but its anonymous version API still did not serve the update at verification time; see [distribution status](../PUBLISHING.md).
+The public [patch release](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.1-beta.1) was uploaded to GitHub, then its VSIX and ZIP assets were downloaded again and matched against the release SHA-256 hashes. The [source-check workflow](https://github.com/MadrasLe/tabyra/actions/runs/39087897135) also passed on GitHub for security commit `56312ce4155f8eb92b4c00d14caad59108a091f4`. Open VSX also activated Browser **0.7.1**: its anonymous version API and public VSIX download were verified, and the downloaded package SHA-256 matched the reviewed release. See [distribution status](../PUBLISHING.md).
 
 ## Remaining trust boundaries
 

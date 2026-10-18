@@ -9,8 +9,7 @@ Project: https://github.com/MadrasLe/tabyra. Public privacy policy: https://gith
 ## Submission status — 17 October 2026
 
 - The public [security update](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.1-beta.1), Browser **0.7.1** / App **0.6.1**, is available for download. Published VSIX/ZIP bytes were downloaded and checked against the release SHA-256 hashes. Connect's executable code remains **0.3.0**.
-- Browser **0.7.1** was submitted through the authenticated Open VSX publishing queue. The owner dashboard lists it as the latest uploaded version, but the anonymous version API did not yet serve it and the public listing remained **0.7.0** at verification time. Treat the update as awaiting registry review/activation until an anonymous download is available; the dashboard's general Public label alone does not confirm that a new version is downloadable.
-- [Tabyra Browser **0.7.0** is publicly available on Open VSX](https://open-vsx.org/extension/gabrielyogi/elektron-browser), published by **MadrasLe** under `gabrielyogi.elektron-browser` and marked **Preview**.
+- [Tabyra Browser **0.7.1** is publicly available on Open VSX](https://open-vsx.org/extension/gabrielyogi/elektron-browser), published by **MadrasLe** under `gabrielyogi.elektron-browser`. The anonymous version API and VSIX download were verified; the downloaded VSIX SHA-256 matches the reviewed release package. Registry review/activation is complete for this patch. The VSIX is a pre-release.
 - The public listing displays **Verified publisher**. The publisher agreement was signed and the `gabrielyogi` namespace was created and verified.
 - The namespace request [EclipseFdn/open-vsx.org#14363](https://github.com/EclipseFdn/open-vsx.org/issues/14363) is closed. The public listing was checked after activation; the earlier Deactivated state is resolved.
 - VS Code Marketplace and Chrome Web Store submissions remain pending.
