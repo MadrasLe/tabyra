@@ -85,7 +85,12 @@
     $('busy').classList.add('hidden');
   }
   window.addEventListener('message', event => {
+    // VS Code forwards from its same-origin frame and masks window.parent.
+    // App also dispatches local events. Unrelated origins cannot supply state.
+    const local = event.source === window || event.source === null && !event.isTrusted;
+    if (!local && event.origin !== location.origin) return;
     const message = event.data;
+    if (!message || typeof message !== 'object' || Array.isArray(message)) return;
     if (message.type === 'state') renderState(message.state);
     else if (message.type === 'chrome_connection') {
       $('chrome-copy-code').disabled = !message.code;

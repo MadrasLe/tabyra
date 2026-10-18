@@ -120,10 +120,37 @@ test('navigation invalidates element refs; tabs, popups and history stay synchro
   assert.equal((await controller.state()).activeId, firstId);
 });
 
+test('embedded Chromium keeps its process sandbox enabled', async () => {
+  const cdp = await controller.context.browser().newBrowserCDPSession();
+  try {
+    const { processInfo } = await cdp.send('SystemInfo.getProcessInfo');
+    const pid = processInfo.find(item => item.type === 'browser')?.id;
+    assert.ok(Number.isInteger(pid) && pid > 0);
+    const execFile = require('node:util').promisify(require('node:child_process').execFile);
+    const command = process.platform === 'win32'
+      ? (await execFile('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+        '(Get-CimInstance Win32_Process -Filter "ProcessId = ' + pid + '").CommandLine'], { windowsHide: true })).stdout
+      : process.platform === 'linux' ? await readFile('/proc/' + pid + '/cmdline', 'utf8')
+      : (await execFile('ps', ['-p', String(pid), '-o', 'command='])).stdout;
+    assert.ok(command.length > 0);
+    assert.ok(!command.includes('--no-sandbox'), 'Tabyra must preserve Chromium sandboxing');
+  } finally { await cdp.detach(); }
+});
+
 test('HTTP bridge rejects missing token, browser origins and reserved panel actions', async () => {
   const { port, token } = bridge.discovery;
   const call = (headers, payload) => fetch(`http://127.0.0.1:${port}/call`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(payload) });
   assert.equal((await call({}, { method: 'tabs', args: {} })).status, 403);
+  // Node fetch replaces Host with the URL's authority; use HTTP directly to
+  // exercise the actual foreign-Host request that a local client can send.
+  const foreignHostStatus = await new Promise((resolve, reject) => {
+    const request = http.request(`http://127.0.0.1:${port}/call`, {
+      method: 'POST', headers: { Host: 'foreign.example', Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    }, response => { response.resume(); resolve(response.statusCode); });
+    request.on('error', reject);
+    request.end(JSON.stringify({ method: 'tabs', args: {} }));
+  });
+  assert.equal(foreignHostStatus, 403);
   assert.equal((await call({ Authorization: `Bearer ${token}`, Origin: 'https://evil.example' }, { method: 'tabs', args: {} })).status, 403);
   assert.equal((await call({ Authorization: `Bearer ${token}` }, { method: 'agent', args: { enabled: true } })).status, 400);
   await controller.call('agent', { enabled: false });
@@ -156,6 +183,54 @@ test('actual MCP stdio client discovers tools, fills, clicks, receives images an
     assert.equal((await call('browser_navigate', { url: base + '/second' })).isError, true);
     await controller.call('agent', { enabled: true });
   } finally { await client.close(); }
+});
+
+test('a foreign window cannot spoof the panel state while trusted host messages still work', async () => {
+  const viewer = await chromium.launch({ executablePath: findBrowser(), headless: true, chromiumSandbox: true });
+  const context = await viewer.newContext();
+  const attackerServer = http.createServer((req, res) => res.end('<!doctype html><title>Foreign window</title>'));
+  await new Promise(resolve => attackerServer.listen(0, '127.0.0.1', resolve));
+  try {
+    await context.addInitScript(() => {
+      window.acquireVsCodeApi = () => ({ postMessage(message) { if (message.type === 'ready') window.panelReady = true; } });
+    });
+    const attacker = await context.newPage();
+    await attacker.goto('http://127.0.0.1:' + attackerServer.address().port);
+    const popup = attacker.waitForEvent('popup');
+    await attacker.evaluate(url => { window.victim = window.open(url); }, base + '/panel');
+    const panel = await popup;
+    await panel.waitForFunction(() => window.panelReady);
+    await panel.evaluate(() => window.addEventListener('message', event => {
+      if (event.data?.state?.activeId === 'forged') window.foreignMessageArrived = true;
+    }));
+    await attacker.evaluate(() => window.victim.postMessage({
+      type: 'state', state: { tabs: [{ id: 'forged', url: 'https://forged.example', title: 'Forged tab' }], activeId: 'forged', agentEnabled: false }
+    }, '*'));
+    await panel.waitForFunction(() => window.foreignMessageArrived);
+    assert.equal(await panel.locator('#tabs').innerText(), '');
+    assert.equal(await panel.locator('#agent').getAttribute('aria-pressed'), 'true');
+    await panel.evaluate(() => window.postMessage({
+      type: 'state', state: { tabs: [{ id: 'trusted', url: 'https://example.com', title: 'Trusted host' }], activeId: 'trusted', agentEnabled: true }
+    }, '*'));
+    await panel.waitForFunction(() => document.getElementById('tabs').textContent.includes('Trusted host'));
+    // VS Code/Antigravity forward messages from a same-origin parent iframe,
+    // rather than dispatching a synthetic event with a null source.
+    const host = await context.newPage();
+    await host.goto(base);
+    await host.evaluate(url => {
+      const frame = document.createElement('iframe'); frame.src = url; document.body.append(frame);
+    }, base + '/panel');
+    const embedded = await (await host.waitForSelector('iframe')).contentFrame();
+    await embedded.waitForFunction(() => window.panelReady);
+    await embedded.evaluate(() => { window.parent = window; window.top = window; window.frameElement = null; });
+    await host.evaluate(() => document.querySelector('iframe').contentWindow.postMessage({
+      type: 'state', state: { tabs: [{ id: 'parent', url: 'https://example.com', title: 'Embedding host' }], activeId: 'parent', agentEnabled: true }
+    }, location.origin));
+    await embedded.waitForFunction(() => document.getElementById('tabs').textContent.includes('Embedding host'), undefined, { timeout: 2000 });
+  } finally {
+    await viewer.close();
+    await new Promise(resolve => attackerServer.close(resolve));
+  }
 });
 
 test('panel renders live frames and relays human typing, clicks, pause and responsive resize', async () => {

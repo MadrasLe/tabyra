@@ -1,4 +1,4 @@
-# Tabyra for Antigravity App · beta 0.6.0
+# Tabyra for Antigravity App · beta 0.6.1
 
 The shared browser opens inside the conversation panel. The IDE can remain closed. The plugin includes its MCP server and uses the Sidecar SDK supplied by Antigravity; it does not bundle another Electron installation or a model.
 
@@ -6,7 +6,7 @@ The shared browser opens inside the conversation panel. The IDE can remain close
 
 Requirements: Windows for this beta, Antigravity App with Sidecar SDK support, Node.js 20+ and Chrome or Edge. macOS/Linux have not been validated.
 
-1. Extract `tabyra-app-0.6.0.zip` to a local folder.
+1. Extract `tabyra-app-0.6.1.zip` to a local folder.
 2. In that folder run `node install.mjs`.
 3. Reopen the App. In **Customizations → Installed**, confirm **Tabyra** is enabled. Open its browser panel from the conversation's extensions menu.
 4. Ask the agent to use the plugin's MCP tools. Its compatibility identifier is `elektron-app_elektron-app`, distinct from the IDE server `elektron-browser`.

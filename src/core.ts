@@ -117,8 +117,8 @@ export class BrowserController extends EventEmitter {
       viewport: { width: this.width, height: this.height },
       deviceScaleFactor: 1,
       acceptDownloads: false,
-      // Playwright enables the Chromium sandbox on Linux when explicitly requested.
-      chromiumSandbox: process.platform === 'linux'
+      // Playwright otherwise adds --no-sandbox on Windows and macOS too.
+      chromiumSandbox: true
     });
     this.context.setDefaultTimeout(5000);
     this.context.setDefaultNavigationTimeout(15000);
@@ -489,7 +489,9 @@ export async function startBridge(controller: Pick<BrowserController, 'call'>, d
     };
     const expected = Buffer.from(`Bearer ${token}`);
     const actual = Buffer.from(request.headers.authorization || '');
-    if (request.headers.origin || actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
+    const address = server.address();
+    const localHost = address && typeof address !== 'string' && request.headers.host === `127.0.0.1:${address.port}`;
+    if (!localHost || request.headers.origin || actual.length !== expected.length || !timingSafeEqual(actual, expected)) {
       reply(403, { error: 'Acesso não autorizado.' }); return;
     }
     if (request.method !== 'POST' || request.url !== '/call' || !request.headers['content-type']?.startsWith('application/json')) {

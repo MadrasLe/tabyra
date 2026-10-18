@@ -1,7 +1,7 @@
 {
   "name": "elektron-app",
   "displayName": "Tabyra",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Navegador compartilhado com sua IA, no painel da conversa do Antigravity App. Funciona sem a IDE e inicia em modo leve.",
   "author": {
     "name": "Gabriel Yogi",

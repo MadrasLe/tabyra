@@ -17,5 +17,5 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
-      - name: Installer, pairing and distribution checks
-        run: node --test --test-concurrency=1 test/install.test.cjs test/pairing.test.cjs test/release.test.cjs
+      - name: Installer, pairing, security and distribution checks
+        run: node --test --test-concurrency=1 test/install.test.cjs test/pairing.test.cjs test/security.test.cjs test/release.test.cjs

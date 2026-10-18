@@ -19,7 +19,7 @@ const toolSource = await readFile(path.join(root, 'src', 'tools.ts'), 'utf8');
 const toolNames = [...toolSource.matchAll(/tool\('(browser_[a-z_]+)'/g)].map(match => match[1]);
 if (toolNames.length !== 16) throw new Error('Manifesto de ferramentas inconsistente.');
 await writeFile(path.join(target, 'tool-manifest.json'), JSON.stringify(toolNames, null, 2) + '\n');
-for (const name of ['browser.html', 'browser.css', 'browser.js', 'app.css', 'app-bridge.js']) {
+for (const name of ['browser.html', 'browser.css', 'browser.js', 'app.css', 'app-guard.js', 'app-bridge.js']) {
   await cp(path.join(root, 'media', name), path.join(sidecar, 'media', name));
 }
 await cp(path.join(root, 'node_modules', 'playwright-core'), path.join(target, 'node_modules', 'playwright-core'), { recursive: true });

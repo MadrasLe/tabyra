@@ -36,17 +36,17 @@ async function main() {
   app = new SidecarApp();
   bridge = await startBridge(session, path.join(dataDir, 'session.json'));
   const nonce = randomBytes(16).toString('hex');
-  const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+  const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' };
   const page = (body: string, contentType: string) => new Response(body, { contentType, headers });
   app.page('/', async () => {
     let html = await readFile(path.join(mediaDir, 'browser.html'), 'utf8');
     html = html.replaceAll('{{nonce}}', nonce).replaceAll('{{csp}}', "'self'").replaceAll('{{style}}', '/browser.css').replaceAll('{{script}}', '/browser.js');
     html = html.replace("default-src 'none';", "default-src 'none'; connect-src 'self';")
-      .replace('</head>', `<link rel="stylesheet" href="/app.css"><script nonce="${nonce}" src="/preload.js"></script><script nonce="${nonce}" src="/app-bridge.js"></script></head>`)
+      .replace('</head>', `<link rel="stylesheet" href="/app.css"><script nonce="${nonce}" src="/app-guard.js"></script><script nonce="${nonce}" src="/preload.js"></script><script nonce="${nonce}" src="/app-bridge.js"></script></head>`)
       .replace('<button id="new-tab"', '<button id="stop-browser" class="icon" title="Encerrar navegador e liberar memória" aria-label="Encerrar navegador"><svg viewBox="0 0 24 24"><path d="M12 3v9M7.2 5.6a8 8 0 1 0 9.6 0"/></svg></button><button id="new-tab"');
     return page(html, 'text/html; charset=utf-8');
   });
-  for (const file of ['browser.css', 'browser.js', 'app.css', 'app-bridge.js']) {
+  for (const file of ['browser.css', 'browser.js', 'app.css', 'app-guard.js', 'app-bridge.js']) {
     app.page('/' + file, async () => {
       let content = await readFile(path.join(mediaDir, file), 'utf8');
       // Keep our palette private: the host also defines --border and --muted.

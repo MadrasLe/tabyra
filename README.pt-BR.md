@@ -8,8 +8,8 @@ O Tabyra mostra um navegador ao lado do código ou dentro da conversa do Antigra
 
 ## Instalação
 
-- **IDE / VS Code:** instale `tabyra-browser-0.7.0.vsix` pelo menu **Instalar do VSIX**. Abra pelo botão Tabyra, `Ctrl+Alt+B` ou **Tabyra: Abrir navegador**. Em **Conectar IA**, copie a configuração e mescle no cliente: `mcpServers` no Antigravity; `servers` em `.vscode/mcp.json` no VS Code. O servidor de compatibilidade continua sendo `elektron-browser`.
-- **Antigravity App:** extraia `tabyra-app-0.6.0.zip` e execute `node install.mjs`. Reabra o App e ative/abra o painel Tabyra. O servidor MCP é `elektron-app_elektron-app`. [Guia do App](APP.md).
+- **IDE / VS Code:** instale `tabyra-browser-0.7.1.vsix` pelo menu **Instalar do VSIX**. Abra pelo botão Tabyra, `Ctrl+Alt+B` ou **Tabyra: Abrir navegador**. Em **Conectar IA**, copie a configuração e mescle no cliente: `mcpServers` no Antigravity; `servers` em `.vscode/mcp.json` no VS Code. O servidor de compatibilidade continua sendo `elektron-browser`.
+- **Antigravity App:** extraia `tabyra-app-0.6.1.zip` e execute `node install.mjs`. Reabra o App e ative/abra o painel Tabyra. O servidor MCP é `elektron-app_elektron-app`. [Guia do App](APP.md).
 - **Chrome:** extraia `tabyra-connect-0.3.0.zip` para uma pasta permanente. Em `chrome://extensions`, ative Modo do desenvolvedor e carregue a pasta sem compactação. No painel Tabyra, selecione Chrome conectado e clique **Conectar Chrome**. [Guia da auxiliar](CHROME.md).
 
 A beta foi validada no Windows; macOS/Linux são experimentais. A edição da IDE precisa de API VS Code 1.90+ e Chrome/Edge. A edição App precisa do Sidecar SDK do Antigravity e Node 20+. O modelo e a conta de IA vêm do seu cliente; o Tabyra não inclui uma assinatura.

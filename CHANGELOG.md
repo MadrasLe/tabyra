@@ -1,3 +1,11 @@
+# Tabyra security update — Browser 0.7.1 / App 0.6.1 / Connect 0.3.0
+
+- Keep Chromium's process sandbox enabled on Windows and macOS as well as Linux.
+- Reject malformed and oversized unauthenticated Chrome handshakes without crashing; bound pending handshakes and refuse foreign WebSocket Host headers.
+- Never follow redirects from the authenticated local MCP bridge; enforce its loopback Host as well as its token and Origin checks.
+- Ignore panel state messages from unrelated origins while preserving the IDE's same-origin frame messages. Validate App SDK theme messages before the host preload handles them, while retaining normal host themes.
+- Send no referrer from App pages. Preserve all 16 MCP tools, arbitrary page JavaScript, automation deadlines and existing approval settings.
+
 # Tabyra beta — Browser 0.7.0 / App 0.6.0 / Connect 0.3.0
 
 - Public brand renamed from Elektron to Tabyra, with a new icon set and consistent panel/helper labels. Original extension, MCP and data identifiers remain stable for in-place updates and existing profiles.

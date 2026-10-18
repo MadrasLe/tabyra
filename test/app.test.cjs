@@ -97,6 +97,10 @@ test('App starts without Chromium; SDK protects state and MCP bridge rejects bro
   await api('/api/action', { method: 'resize', args: { width: 820, height: 600 } });
   assert.equal((await api('/api/poll')).result.state.running, false, 'Resizing an idle panel must not launch Chromium');
   assert.equal((await api('/api/poll', {}, false)).status, 401);
+  const panelResponse = await fetch(`http://127.0.0.1:${port}/`);
+  assert.equal(panelResponse.headers.get('referrer-policy'), 'no-referrer');
+  const panelSource = await panelResponse.text();
+  assert.ok(panelSource.indexOf('/app-guard.js') < panelSource.indexOf('/preload.js'));
   const discovery = JSON.parse(await readFile(path.join(dir, 'session.json'), 'utf8'));
   const response = await fetch(`http://127.0.0.1:${discovery.port}/call`, { method: 'POST', headers: { Authorization: 'Bearer ' + discovery.token, Origin: 'https://example.com', 'Content-Type': 'application/json' }, body: JSON.stringify({ method: 'tabs', args: {} }) });
   assert.equal(response.status, 403);
@@ -164,6 +168,43 @@ test('concurrent panel opens reuse Chromium and a duplicate App instance cannot 
   assert.match(output, /Outra instância/);
   assert.equal(await readFile(path.join(dir, 'session.json'), 'utf8'), original);
   assert.equal((await tool('tabs')).running, true);
+});
+
+test('App ignores theme spoofing from a foreign opener and malformed SDK messages', async () => {
+  const browser = await chromium.launch({ executablePath: findBrowser(), headless: true, chromiumSandbox: true });
+  try {
+    const context = await browser.newContext();
+    await context.addInitScript(() => window.addEventListener('message', event => {
+      if (event.data?.type === 'theme-change' && event.data?.payload?.cssVariables?.['--background'] === 'rgb(255, 0, 0)') window.foreignThemeArrived = true;
+    }, true));
+    const opener = await context.newPage();
+    await opener.goto(base);
+    const popup = opener.waitForEvent('popup');
+    await opener.evaluate(url => { window.victim = window.open(url); }, 'http://127.0.0.1:' + port + '/?token=' + token);
+    const panel = await popup;
+    const errors = [];
+    panel.on('pageerror', reason => errors.push(reason.message));
+    await panel.waitForFunction(() => window.sidecar);
+    const original = await panel.evaluate(() => document.documentElement.style.getPropertyValue('--background'));
+    await opener.evaluate(() => {
+      window.victim.postMessage({ type: 'theme-change', payload: { cssVariables: { '--background': 'rgb(255, 0, 0)' } } }, '*');
+    });
+    await panel.waitForFunction(() => window.foreignThemeArrived);
+    assert.equal(await panel.evaluate(() => document.documentElement.style.getPropertyValue('--background')), original);
+    await panel.evaluate(() => {
+      window.postMessage({ type: 'theme-change', payload: null }, '*');
+      window.postMessage({ type: 'theme-change', payload: { cssVariables: { color: 'red' } } }, '*');
+      window.postMessage(null, '*');
+      window.postMessage({ type: 'theme-change', payload: { cssVariables: { '--security-marker': 'processed' } } }, '*');
+    });
+    await panel.waitForFunction(() => document.documentElement.style.getPropertyValue('--security-marker') === 'processed');
+    assert.deepEqual(errors, []);
+    assert.equal(await panel.evaluate(() => document.documentElement.style.color), '');
+    await panel.evaluate(() => window.postMessage({
+      type: 'theme-change', payload: { cssVariables: { '--background': '#15171e' } }
+    }, '*'));
+    await panel.waitForFunction(() => document.documentElement.style.getPropertyValue('--background') === '#15171e');
+  } finally { await browser.close(); }
 });
 
 test('actual App panel renders, types manually, shows agent target, pauses, and follows theme at narrow width', async () => {

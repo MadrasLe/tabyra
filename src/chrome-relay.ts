@@ -35,6 +35,7 @@ export class ChromeRelay extends EventEmitter {
   private cdpToken = randomBytes(32).toString('hex');
   private userAgent = '';
   private handoff?: { token: string; expires: number };
+  private handshakes = new Set<WebSocket>();
   extensionVersion?: string;
   activeId?: number;
   manual = false;
@@ -52,9 +53,10 @@ export class ChromeRelay extends EventEmitter {
     } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
     this.token ||= randomBytes(32).toString('hex');
     this.server.on('upgrade', (request, socket, head) => {
+      if (request.headers.host !== `127.0.0.1:${this.port}`) { socket.destroy(); return; }
       const extension = request.url === '/extension' && /^chrome-extension:\/\/[a-p]{32}$/.test(request.headers.origin || '');
       const cdp = request.url === '/cdp' && !request.headers.origin && this.secret(request.headers.authorization || '', `Bearer ${this.cdpToken}`);
-      if (this.stopping || !extension && !cdp || cdp && (!this.connected || this.manual || this.client)) { socket.destroy(); return; }
+      if (this.stopping || !extension && !cdp || extension && (this.connected || this.handshakes.size >= 32) || cdp && (!this.connected || this.manual || this.client)) { socket.destroy(); return; }
       this.sockets.handleUpgrade(request, socket, head, ws => {
         ws.on('error', () => {});
         if (extension) this.handshake(ws);
@@ -84,13 +86,25 @@ export class ChromeRelay extends EventEmitter {
   listTabs() { return [...this.tabs.values()].map(tab => ({ id: String(tab.id), title: tab.title || '', url: tab.url || 'about:blank' })); }
 
   private handshake(ws: WebSocket) {
-    const timer = setTimeout(() => ws.close(1008, 'Pairing required'), 3000);
+    this.handshakes.add(ws);
+    let timer = setTimeout(() => ws.terminate(), 3000);
+    const refuse = () => {
+      ws.close(1008, 'Pairing refused');
+      // Keep this unauthenticated peer in the admission count until it closes.
+      timer = setTimeout(() => ws.terminate(), 1000);
+    };
     ws.once('message', raw => {
       clearTimeout(timer);
       let hello: any;
-      try { hello = JSON.parse(raw.toString()); } catch { ws.close(1008); return; }
+      try {
+        const json = raw.toString();
+        if (Buffer.byteLength(json) > 64 * 1024) throw new Error('Handshake too large');
+        hello = JSON.parse(json);
+        if (!hello || typeof hello !== 'object' || Array.isArray(hello)) throw new Error('Invalid handshake');
+      } catch { refuse(); return; }
       const handoff = this.handoff && Date.now() < this.handoff.expires && typeof hello.token === 'string' && this.secret(hello.token, this.handoff.token);
-      if (this.extension || hello.type !== 'hello' || typeof hello.token !== 'string' || !handoff && !this.secret(hello.token, this.token)) { ws.close(1008, 'Pairing refused'); return; }
+      if (this.extension || hello.type !== 'hello' || typeof hello.token !== 'string' || !handoff && !this.secret(hello.token, this.token)) { refuse(); return; }
+      this.handshakes.delete(ws);
       if (handoff) this.handoff = undefined;
       this.extension = ws; this.tabs.clear(); this.sessions.clear(); this.aliases.clear();
       this.manual = hello.manual === true;
@@ -107,16 +121,18 @@ export class ChromeRelay extends EventEmitter {
       ws.send(JSON.stringify({ type: 'ready', ...(handoff ? { token: this.token } : {}) }));
       this.emit('ready'); this.emit('changed');
     });
-    ws.once('close', () => clearTimeout(timer));
+    ws.once('close', () => { clearTimeout(timer); this.handshakes.delete(ws); });
   }
   private updateTabs(tabs: unknown, activeId: unknown) {
     if (!Array.isArray(tabs)) return;
-    this.tabs = new Map(tabs.filter(tab => Number.isInteger(tab?.id) && typeof tab.url === 'string').map(tab => [tab.id, tab]));
+    this.tabs = new Map(tabs.filter(tab => tab && typeof tab === 'object' && Number.isInteger(tab.id)
+      && Number.isInteger(tab.windowId) && typeof tab.url === 'string' && typeof tab.title === 'string').map(tab => [tab.id, tab]));
     this.activeId = typeof activeId === 'number' && this.tabs.has(activeId) ? activeId : this.tabs.keys().next().value;
   }
   private receive(raw: string) {
     try {
       const message = JSON.parse(raw);
+      if (!message || typeof message !== 'object' || Array.isArray(message)) throw new Error('Invalid message');
       if (Number.isInteger(message.id)) {
         const pending = this.pending.get(message.id);
         if (pending) { clearTimeout(pending.timer); this.pending.delete(message.id); message.error ? pending.reject(new Error(String(message.error))) : pending.resolve(message.result); }

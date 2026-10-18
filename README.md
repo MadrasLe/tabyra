@@ -16,8 +16,8 @@ Actual panel capture from a local test page. No personal account is shown.
 
 | Edition | Package | Requires |
 | --- | --- | --- |
-| Tabyra Browser | `tabyra-browser-0.7.0.vsix` | Desktop VS Code / Antigravity IDE, API 1.90+, Chrome or Edge |
-| Tabyra for Antigravity App | `tabyra-app-0.6.0.zip` | Antigravity App with Sidecar SDK, Node.js 20+ |
+| Tabyra Browser | `tabyra-browser-0.7.1.vsix` | Desktop VS Code / Antigravity IDE, API 1.90+, Chrome or Edge |
+| Tabyra for Antigravity App | `tabyra-app-0.6.1.zip` | Antigravity App with Sidecar SDK, Node.js 20+ |
 | Tabyra Connect | `tabyra-connect-0.3.0.zip` | Chrome 125+; helper for your regular Chrome profile |
 
 Windows is the validated beta platform. Browser detection exists for macOS/Linux but those platforms are experimental. This is a desktop extension; it does not run on vscode.dev. The AI model and its account are supplied by your MCP client, separately from Tabyra.
