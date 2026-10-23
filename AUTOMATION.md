@@ -32,6 +32,14 @@ Passar parâmetros sem montar código com texto do site:
 
 A função pode consultar ou modificar o DOM e usar APIs web na origem da página. Não existe Node.js, `require`, acesso ao sistema de arquivos ou acesso às variáveis JavaScript do código do site: ela executa em um mundo isolado, que compartilha o DOM. As regras de origem dos iframes continuam valendo. Não é um console JavaScript genérico do computador nem uma nova IA. Para cliques e preenchimento comuns, as ferramentas dedicadas mantêm a espera por elementos e o cursor com alvo real.
 
+## Console e DevTools: o que está disponível
+
+`browser_evaluate` permite executar JavaScript no DOM, mas não equivale ao Console completo do Chrome. Use `return` para enviar o resultado à IA; chamadas de `console.log` não são coletadas como retorno da ferramenta. Exceções da própria função avaliada são retornadas como erro da chamada.
+
+As ferramentas atuais não expõem histórico de logs, erros gerais do site em segundo plano, requisições/respostas de rede, breakpoints ou uma interface DevTools. O contexto isolado também não recebe as variáveis e funções do JavaScript principal do site.
+
+No modo Chrome conectado, a pessoa pode depurar pela janela normal: libere o debugger pelo controle **Fazer login no Chrome**, abra o DevTools do Chrome e, ao terminar, feche-o e retome o painel. Isso é um uso manual do navegador, não uma ferramenta de console para o agente.
+
 ## Componentes e editores de código
 
 No App **0.4.0** / IDE **0.5.0**, `browser_snapshot` percorre Shadow DOM **aberto**, inclusive aninhado. As referências internas podem ser usadas em cliques/preenchimento. O seletor CSS de área também busca em raízes abertas. Controles podem trazer `checked` e `expanded`, evitando alternar uma chave sem saber o estado atual. Raízes fechadas e conteúdo de iframes continuam fora dessa leitura.

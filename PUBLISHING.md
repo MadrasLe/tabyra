@@ -26,7 +26,7 @@ Review the 256 px store icon, Chrome 16/32/48/128 px icons, and screenshots. Any
 
 Create or use a publisher account for `gabrielyogi`. A manifest field does not register or verify that account. Submit the prepared pre-release VSIX through the publisher dashboard or authenticated vsce. Configure the real repository/homepage once available, and use its public support/privacy URLs. [Official guide](https://code.visualstudio.com/api/working-with-extensions/publishing-extension).
 
-Suggested title: **Tabyra Browser**. Short description: **A browser shared by you and your AI, inside your editor.** Mark Windows as validated, macOS/Linux as experimental, and disclose that an MCP client/model account is separate.
+Suggested title: **Tabyra Browser**. Short description: **Browse with your AI in VS Code and Antigravity: shared tabs, signed-in Chrome, screenshots and JavaScript automation through MCP.** Mark Windows as validated, macOS/Linux as experimental, and disclose that an MCP client/model account is separate.
 
 ## Open VSX / Antigravity IDE
 

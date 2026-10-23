@@ -1,3 +1,9 @@
+# Tabyra listing update — Browser 0.7.2 · 23 October 2026
+
+- Rewrite the English and Portuguese product descriptions with practical use cases, mode comparisons, direct installation/download links and example agent requests.
+- Explain the current JavaScript capability precisely: isolated DOM evaluation is available; console history, general page errors, network inspection, breakpoints and a docked DevTools interface are not exposed as tools.
+- Keep browser behavior, all 16 MCP tools, permissions, profiles and the security fixes from 0.7.1 unchanged. App 0.6.1 and Connect 0.3.0 remain the current companion versions.
+
 # Tabyra security update — Browser 0.7.1 / App 0.6.1 / Connect 0.3.0
 
 - Keep Chromium's process sandbox enabled on Windows and macOS as well as Linux.

@@ -1,8 +1,8 @@
 {
   "name": "elektron-browser",
   "displayName": "Tabyra Browser",
-  "description": "A browser shared by you and your AI, inside your editor. Formerly Elektron Browser.",
-  "version": "0.7.1",
+  "description": "Browse with your AI in VS Code and Antigravity: shared tabs, signed-in Chrome, screenshots and JavaScript automation through MCP.",
+  "version": "0.7.2",
   "publisher": "gabrielyogi",
   "license": "MIT",
   "engines": {
@@ -155,7 +155,7 @@
     "build": "node scripts/build.mjs",
     "check": "tsc --noEmit",
     "test": "npm run build && node scripts/package-app.mjs && node --test --test-concurrency=1 test/*.test.cjs",
-    "package": "npm run check && npm run build && vsce package --pre-release --out tabyra-browser-0.7.1.vsix",
+    "package": "npm run check && npm run build && vsce package --pre-release --out tabyra-browser-0.7.2.vsix",
     "app:package": "npm run check && npm run build && node scripts/package-app.mjs",
     "app:install": "npm run app:package && node scripts/install-app.mjs",
     "vscode:prepublish": "npm run build",
