@@ -6,7 +6,15 @@ The stable extension identity is `gabrielyogi.elektron-browser`; the App plugin 
 
 Project: https://github.com/MadrasLe/tabyra. Public privacy policy: https://github.com/MadrasLe/tabyra/blob/main/PRIVACY.md. Support: https://github.com/MadrasLe/tabyra/blob/main/SUPPORT.md. The repository and these public pages are available.
 
-## Submission status — 17 October 2026
+## Description update — 23 October 2026
+
+- [Browser **0.7.2**](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.2-beta.1) updates the product listing, English/Portuguese guides, practical examples and developer-console scope. The GitHub repository's short description was updated too.
+- The public GitHub VSIX was downloaded and its SHA-256 matched the reviewed local package. The archive contains the updated documentation, with repository links rewritten by vsce, and unchanged browser worker/editor/panel/helper code compared with 0.7.1. The MCP's reported editor version is 0.7.2.
+- TypeScript/package checks and **5/5** targeted security/distribution tests passed. [GitHub source checks](https://github.com/MadrasLe/tabyra/actions/runs/40017960485) passed for commit `d0b1757839b7d024c90ff85700ac6379cb595d33`. A full browser suite was not rerun for this documentation-only update.
+- Open VSX received 0.7.2 and showed **Reviewing**. Its anonymous version API still returned 404 at the latest check, so the public listing update remains pending registry activation. The available store version remains 0.7.1 until the new version can be retrieved anonymously.
+- App **0.6.1** and Connect **0.3.0** remain current and do not require an update for this change. Their packages are linked from the earlier security release.
+
+## Security release status — 17 October 2026
 
 - The public [security update](https://github.com/MadrasLe/tabyra/releases/tag/v0.7.1-beta.1), Browser **0.7.1** / App **0.6.1**, is available for download. Published VSIX/ZIP bytes were downloaded and checked against the release SHA-256 hashes. Connect's executable code remains **0.3.0**.
 - [Tabyra Browser **0.7.1** is publicly available on Open VSX](https://open-vsx.org/extension/gabrielyogi/elektron-browser), published by **MadrasLe** under `gabrielyogi.elektron-browser`. The anonymous version API and VSIX download were verified; the downloaded VSIX SHA-256 matches the reviewed release package. Registry review/activation is complete for this patch. The VSIX is a pre-release.
